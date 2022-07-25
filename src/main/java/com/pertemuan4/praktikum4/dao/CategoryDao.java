@@ -55,6 +55,15 @@ public class CategoryDao implements DaoInterface<Category> {
 
     }
 
+    @Override
+    public void delData(Category data) {
+
+    }
+
+    @Override
+    public void upData(Category data) {
+
+    }
 
 
 }

@@ -6,6 +6,7 @@ public interface DaoInterface<T> {
 
     public ObservableList<T> getData();
     void addData(T data);
-//    void delData(T data);
+    void delData(T data);
+    void upData(T data);
 
 }

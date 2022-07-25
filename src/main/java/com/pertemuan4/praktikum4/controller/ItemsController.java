@@ -101,6 +101,20 @@ public class ItemsController {
     }
 
     public void itemsSelected(MouseEvent mouseEvent) {
+
+        if(!tableItems.getSelectionModel().getSelectedCells().isEmpty()){
+            saveItems.setDisable(true);
+            resetItems.setDisable(true);
+            updateItems.setDisable(false);
+            deleteItems.setDisable(false);
+            itemsId.setDisable(true);
+        }
+        itemsId.setText(String.valueOf(tableItems.getSelectionModel().getSelectedItem().getId()));
+        itemsName.setText(tableItems.getSelectionModel().getSelectedItem().getName());
+        itemsPrice.setText(String.valueOf(tableItems.getSelectionModel().getSelectedItem().getPrice()));
+        itemsDesc.setText(tableItems.getSelectionModel().getSelectedItem().getDescription());
+        itemsCategory.valueProperty().setValue(tableItems.getSelectionModel().getSelectedItem().getCategory());
+
     }
 
     public void resetItems() {
@@ -109,11 +123,45 @@ public class ItemsController {
         itemsPrice.setText("");
         itemsDesc.setText("");
         itemsCategory.valueProperty().setValue(null);
-    }
 
-    public void updateItems(ActionEvent actionEvent) {
+        saveItems.setDisable(false);
+        resetItems.setDisable(false);
+        updateItems.setDisable(true);
+        deleteItems.setDisable(true);
+        itemsId.setDisable(false);
     }
 
     public void deleteItems(ActionEvent actionEvent) {
+
+        Items selected;
+        selected = tableItems.getSelectionModel().getSelectedItem();
+
+        ItemsDao transaksiDao = new ItemsDao();
+        transaksiDao.delData(selected);
+
+        items = transaksiDao.getData();
+        tableItems.setItems(items);
+        resetItems();
+
     }
+
+    public void updateItems(ActionEvent actionEvent) {
+
+        Items selected;
+        selected = tableItems.getSelectionModel().getSelectedItem();
+
+        selected.setName(itemsName.getText());
+        selected.setPrice(Double.parseDouble(itemsPrice.getText()));
+        selected.setDescription(itemsDesc.getText());
+        selected.setCategory(itemsCategory.getValue());
+
+        ItemsDao transaksiDao = new ItemsDao();
+        transaksiDao.upData(selected);
+
+        items = transaksiDao.getData();
+        tableItems.setItems(items);
+        resetItems();
+
+    }
+
 }

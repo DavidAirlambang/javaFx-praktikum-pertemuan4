@@ -63,4 +63,58 @@ public class ItemsDao implements DaoInterface<Items>{
             throw new RuntimeException(e);
         }
     }
+
+    @Override
+    public void delData(Items data) {
+
+        Connection conn = MyConnection.getConnection();
+        String query = "delete from items where id = ?";
+        PreparedStatement ps;
+        try {
+            ps = conn.prepareStatement(query);
+            ps.setInt(1, data.getId());
+            int result = ps.executeUpdate();
+            if(result > 0) {
+                System.out.println("berhasil delete");
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    @Override
+    public void upData(Items data) {
+
+        Connection conn = MyConnection.getConnection();
+        String query = "update items set name=?,price=?," +
+                "description=?,category_id=? where id=? ;";
+        PreparedStatement ps;
+        try {
+
+//            conn.setAutoCommit(false);
+
+            ps = conn.prepareStatement(query);
+            ps.setString(1,data.getName());
+            ps.setDouble(2,data.getPrice());
+            ps.setString(3,data.getDescription());
+            ps.setInt(4,data.getCategory().getId());
+            ps.setInt(5, data.getId());
+            int result = ps.executeUpdate();
+            if(result > 0) {
+
+//                conn.commit();
+
+                System.out.println("berhasil update");
+            }
+
+//            else {
+//                conn.rollback();
+//            }
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }
