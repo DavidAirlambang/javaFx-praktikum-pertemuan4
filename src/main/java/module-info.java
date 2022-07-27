@@ -2,6 +2,7 @@ module com.pertemuan4.praktikum4 {
     requires javafx.controls;
     requires javafx.fxml;
     requires java.sql;
+    requires jasperreports;
 
 
     opens com.pertemuan4.praktikum4 to javafx.fxml;

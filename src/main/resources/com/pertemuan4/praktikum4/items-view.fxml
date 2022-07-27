@@ -18,7 +18,6 @@
 <?import javafx.scene.layout.RowConstraints?>
 <?import javafx.scene.layout.VBox?>
 
-
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/18" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.pertemuan4.praktikum4.controller.ItemsController">
    <children>
       <MenuBar prefHeight="26.0" prefWidth="600.0">
@@ -29,6 +28,12 @@
                   <MenuItem fx:id="close" mnemonicParsing="false" onAction="#close" text="Close" />
             </items>
           </Menu>
+            <Menu mnemonicParsing="false" text="Report">
+               <items>
+                  <MenuItem fx:id="simpleReport" mnemonicParsing="false" onAction="#simpleReport" text="Simple Report" />
+                  <MenuItem fx:id="categoryReport" mnemonicParsing="false" onAction="#categoryReport" text="Group Report" />
+               </items>
+            </Menu>
           <Menu mnemonicParsing="false" text="Help">
             <items>
               <MenuItem mnemonicParsing="false" text="About" />

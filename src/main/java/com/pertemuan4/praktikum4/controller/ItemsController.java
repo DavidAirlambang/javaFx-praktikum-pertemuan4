@@ -5,6 +5,7 @@ import com.pertemuan4.praktikum4.dao.CategoryDao;
 import com.pertemuan4.praktikum4.dao.ItemsDao;
 import com.pertemuan4.praktikum4.entity.Category;
 import com.pertemuan4.praktikum4.entity.Items;
+import com.pertemuan4.praktikum4.util.MyConnection;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -15,8 +16,15 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.view.JasperViewer;
 
 import java.io.IOException;
+import java.sql.Connection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ItemsController {
     public MenuItem goCategory;
@@ -35,6 +43,8 @@ public class ItemsController {
     public TableColumn colItemsName;
     public TableColumn colItemsPrice;
     public TableColumn colItemsCategory;
+    public MenuItem simpleReport;
+    public MenuItem categoryReport;
 
     private ObservableList<Items> items;
     private ObservableList<Category> categories;
@@ -43,6 +53,8 @@ public class ItemsController {
 
         goCategory.setAccelerator(KeyCombination.keyCombination("Alt+C"));
         close.setAccelerator(KeyCombination.keyCombination("Alt+X"));
+        simpleReport.setAccelerator(KeyCombination.keyCombination("Alt+S"));
+        categoryReport.setAccelerator(KeyCombination.keyCombination("Alt+G"));
 
         CategoryDao categoryDao = new CategoryDao();
         categories = categoryDao.getData();
@@ -164,4 +176,37 @@ public class ItemsController {
 
     }
 
+    public void simpleReport(ActionEvent actionEvent) {
+
+        JasperPrint jp;
+        Connection conn = MyConnection.getConnection();
+        Map param = new HashMap();
+        try {
+            jp = JasperFillManager.fillReport("reports/ReportAll.jasper",param,conn);
+            JasperViewer viewer = new JasperViewer(jp,false);
+            viewer.setTitle("All Report");
+            viewer.setVisible(true);
+
+        } catch (JRException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public void categoryReport(ActionEvent actionEvent) {
+
+        JasperPrint jp;
+        Connection conn = MyConnection.getConnection();
+        Map param = new HashMap();
+        try {
+            jp = JasperFillManager.fillReport("reports/ReportGroup.jasper",param,conn);
+            JasperViewer viewer = new JasperViewer(jp,false);
+            viewer.setTitle("Group Report");
+            viewer.setVisible(true);
+
+        } catch (JRException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
 }
