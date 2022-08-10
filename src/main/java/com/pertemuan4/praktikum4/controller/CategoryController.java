@@ -2,6 +2,7 @@ package com.pertemuan4.praktikum4.controller;
 
 import com.pertemuan4.praktikum4.dao.CategoryDao;
 import com.pertemuan4.praktikum4.entity.Category;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.scene.control.*;
@@ -21,7 +22,7 @@ public class CategoryController {
     public void initialize(){
 
         CategoryDao categoryDao = new CategoryDao();
-        categories = categoryDao.getData();
+        categories = FXCollections.observableArrayList(categoryDao.getData());
         tableCategory.setItems(categories);
         colCategoryId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colCategoryName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -40,8 +41,12 @@ public class CategoryController {
         } else {
 
             CategoryDao categoryDao = new CategoryDao();
-            categoryDao.addData(new Category(Integer.parseInt(categoryId.getText()), categoryName.getText()));
-            categories = categoryDao.getData();
+            Category category = new Category();
+            category.setId(Integer.parseInt(categoryId.getText()));
+            category.setName(categoryName.getText());
+            categoryDao.addData(category);
+
+            categories = FXCollections.observableArrayList(categoryDao.getData());
             tableCategory.setItems(categories);
             colCategoryId.setCellValueFactory(new PropertyValueFactory<>("id"));
             colCategoryName.setCellValueFactory(new PropertyValueFactory<>("name"));
@@ -51,8 +56,4 @@ public class CategoryController {
         }
 
     }
-
-    public void categorySelected(MouseEvent mouseEvent) {
-    }
-
 }

@@ -1,57 +1,44 @@
 package com.pertemuan4.praktikum4.dao;
 
 import com.pertemuan4.praktikum4.entity.Category;
-import com.pertemuan4.praktikum4.util.MyConnection;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
+import com.pertemuan4.praktikum4.util.HiberUtil;
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
+import java.util.List;
 
 public class CategoryDao implements DaoInterface<Category> {
 
+
     @Override
-    public ObservableList<Category> getData() {
+    public List<Category> getData() {
 
-        ObservableList<Category> listCategory = FXCollections.observableArrayList();
-        Connection conn = MyConnection.getConnection();
-        String query = "select * from category";
-        PreparedStatement ps;
+        List listCategory;
 
-        try {
-            ps = conn.prepareStatement(query);
-            ResultSet result = ps.executeQuery();
-            while (result.next()) {
-                int id = result.getInt("id");
-                String name = result.getString("name");
-                Category category = new Category(id, name);
-                listCategory.add(category);
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        SessionFactory sf = HiberUtil.getSession();
+        Session s = sf.openSession();
+
+        CriteriaBuilder builder = s.getCriteriaBuilder();
+        CriteriaQuery query = builder.createQuery(Category.class);
+        query.from(Category.class);
+        listCategory = s.createQuery(query).getResultList();
+
+        s.close();
         return listCategory;
+
     }
 
     @Override
     public void addData(Category data) {
 
-        Connection conn = MyConnection.getConnection();
-        String query = "insert into category values (?,?)";
-        PreparedStatement ps;
-        try {
-            ps = conn.prepareStatement(query);
-            ps.setString(1, String.valueOf(data.getId()));
-            ps.setString(2,data.getName());
-            int result = ps.executeUpdate();
-            if(result > 0) {
-                System.out.println("berhasil menambahkan");
-            }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
+        SessionFactory sf = HiberUtil.getSession();
+        Session s = sf.openSession();
+        s.save(data);
+        s.close();
 
     }
 
@@ -64,6 +51,4 @@ public class CategoryDao implements DaoInterface<Category> {
     public void upData(Category data) {
 
     }
-
-
 }

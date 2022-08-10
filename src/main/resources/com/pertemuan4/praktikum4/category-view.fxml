@@ -49,7 +49,7 @@
                   </Button>
                </children>
             </VBox>
-            <TableView fx:id="tableCategory" onMouseClicked="#categorySelected" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
+            <TableView fx:id="tableCategory" prefHeight="200.0" prefWidth="200.0" GridPane.rowIndex="1">
               <columns>
                 <TableColumn fx:id="colCategoryId" prefWidth="300.0" text="ID" />
                 <TableColumn fx:id="colCategoryName" prefWidth="300.0" text="Category Name" />

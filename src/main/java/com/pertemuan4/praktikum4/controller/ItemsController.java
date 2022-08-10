@@ -6,6 +6,7 @@ import com.pertemuan4.praktikum4.dao.ItemsDao;
 import com.pertemuan4.praktikum4.entity.Category;
 import com.pertemuan4.praktikum4.entity.Items;
 import com.pertemuan4.praktikum4.util.MyConnection;
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -57,16 +58,16 @@ public class ItemsController {
         categoryReport.setAccelerator(KeyCombination.keyCombination("Alt+G"));
 
         CategoryDao categoryDao = new CategoryDao();
-        categories = categoryDao.getData();
+        categories = FXCollections.observableArrayList(categoryDao.getData());
         itemsCategory.setItems(categories);
 
         ItemsDao itemsDao = new ItemsDao();
-        items = itemsDao.getData();
+        items = FXCollections.observableArrayList(itemsDao.getData());
         tableItems.setItems(items);
         colItemsId.setCellValueFactory(new PropertyValueFactory<>("id"));
         colItemsName.setCellValueFactory(new PropertyValueFactory<>("name"));
         colItemsPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
-        colItemsCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
+        colItemsCategory.setCellValueFactory(new PropertyValueFactory<>("categoryByCategoryId"));
     }
 
     public void goCategory(ActionEvent actionEvent) throws IOException {
@@ -81,7 +82,7 @@ public class ItemsController {
         stage.showAndWait();
 
         CategoryDao categoryDao = new CategoryDao();
-        categories = categoryDao.getData();
+        categories = FXCollections.observableArrayList(categoryDao.getData());
         itemsCategory.setItems(categories);
     }
 
@@ -100,16 +101,18 @@ public class ItemsController {
             gkIsi.showAndWait();
         } else {
             ItemsDao itemsDao = new ItemsDao();
-            itemsDao.addData(new Items(Integer.parseInt(itemsId.getText()), itemsName.getText(),
-                    Double.parseDouble(itemsPrice.getText()), itemsDesc.getText(), itemsCategory.getValue()));
-            items = itemsDao.getData();
+            Items itemnya = new Items();
+            itemnya.setId(Integer.parseInt(itemsId.getText()));
+            itemnya.setName(itemsName.getText());
+            itemnya.setPrice(Integer.valueOf(itemsPrice.getText()));
+            itemnya.setDescription(itemsDesc.getText());
+            itemnya.setCategoryByCategoryId(itemsCategory.getValue());
+            itemsDao.addData(itemnya);
+            items = FXCollections.observableArrayList(itemsDao.getData());
             tableItems.setItems(items);
-            colItemsId.setCellValueFactory(new PropertyValueFactory<>("id"));
-            colItemsName.setCellValueFactory(new PropertyValueFactory<>("name"));
-            colItemsPrice.setCellValueFactory(new PropertyValueFactory<>("price"));
-            colItemsCategory.setCellValueFactory(new PropertyValueFactory<>("category"));
             resetItems();
         }
+
     }
 
     public void itemsSelected(MouseEvent mouseEvent) {
@@ -125,7 +128,7 @@ public class ItemsController {
         itemsName.setText(tableItems.getSelectionModel().getSelectedItem().getName());
         itemsPrice.setText(String.valueOf(tableItems.getSelectionModel().getSelectedItem().getPrice()));
         itemsDesc.setText(tableItems.getSelectionModel().getSelectedItem().getDescription());
-        itemsCategory.valueProperty().setValue(tableItems.getSelectionModel().getSelectedItem().getCategory());
+        itemsCategory.valueProperty().setValue(tableItems.getSelectionModel().getSelectedItem().getCategoryByCategoryId());
 
     }
 
@@ -151,7 +154,7 @@ public class ItemsController {
         ItemsDao transaksiDao = new ItemsDao();
         transaksiDao.delData(selected);
 
-        items = transaksiDao.getData();
+        items = FXCollections.observableArrayList(transaksiDao.getData());
         tableItems.setItems(items);
         resetItems();
 
@@ -163,15 +166,16 @@ public class ItemsController {
         selected = tableItems.getSelectionModel().getSelectedItem();
 
         selected.setName(itemsName.getText());
-        selected.setPrice(Double.parseDouble(itemsPrice.getText()));
+        selected.setPrice(Integer.valueOf((itemsPrice.getText())));
         selected.setDescription(itemsDesc.getText());
-        selected.setCategory(itemsCategory.getValue());
+        selected.setCategoryByCategoryId(itemsCategory.getValue());
 
-        ItemsDao transaksiDao = new ItemsDao();
-        transaksiDao.upData(selected);
+        ItemsDao itemsDao = new ItemsDao();
+        itemsDao.upData(selected);
 
-        items = transaksiDao.getData();
+        items = FXCollections.observableArrayList(itemsDao.getData());
         tableItems.setItems(items);
+        tableItems.refresh();
         resetItems();
 
     }

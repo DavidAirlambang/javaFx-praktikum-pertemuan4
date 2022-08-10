@@ -1,20 +1,27 @@
 package com.pertemuan4.praktikum4.entity;
 
+import javax.persistence.*;
+import java.util.Objects;
+
+@Entity
+@Table(name = "items", schema = "praktikum4_javafx", catalog = "")
 public class Items {
-
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @Column(name = "id")
     private int id;
+    @Basic
+    @Column(name = "name")
     private String name;
-    private double price;
+    @Basic
+    @Column(name = "price")
+    private Integer price;
+    @Basic
+    @Column(name = "description")
     private String description;
-    private Category category;
-
-    public Items(int id, String name, double price, String description, Category category) {
-        this.id = id;
-        this.name = name;
-        this.price = price;
-        this.description = description;
-        this.category = category;
-    }
+    @ManyToOne
+    @JoinColumn(name = "category_id", referencedColumnName = "id", nullable = false)
+    private Category categoryByCategoryId;
 
     public int getId() {
         return id;
@@ -32,11 +39,11 @@ public class Items {
         this.name = name;
     }
 
-    public double getPrice() {
+    public Integer getPrice() {
         return price;
     }
 
-    public void setPrice(double price) {
+    public void setPrice(Integer price) {
         this.price = price;
     }
 
@@ -48,11 +55,35 @@ public class Items {
         this.description = description;
     }
 
-    public Category getCategory() {
-        return category;
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Items that = (Items) o;
+        return id == that.id && Objects.equals(name, that.name) && Objects.equals(price, that.price) && Objects.equals(description, that.description);
     }
 
-    public void setCategory(Category category) {
-        this.category = category;
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, price, description);
+    }
+
+    public Category getCategoryByCategoryId() {
+        return categoryByCategoryId;
+    }
+
+    public void setCategoryByCategoryId(Category categoryByCategoryId) {
+        this.categoryByCategoryId = categoryByCategoryId;
+    }
+
+    @Override
+    public String toString() {
+        return "Items{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", price=" + price +
+                ", description='" + description + '\'' +
+                ", categoryByCategoryId=" + categoryByCategoryId +
+                '}';
     }
 }
