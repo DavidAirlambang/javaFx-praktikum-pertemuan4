@@ -26,6 +26,8 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class ItemsController {
     public MenuItem goCategory;
@@ -180,37 +182,65 @@ public class ItemsController {
 
     }
 
-    public void simpleReport(ActionEvent actionEvent) {
+    public class SimpleReportThread extends Thread{
 
-        JasperPrint jp;
-        Connection conn = MyConnection.getConnection();
-        Map param = new HashMap();
-        try {
-            jp = JasperFillManager.fillReport("reports/ReportAll.jasper",param,conn);
-            JasperViewer viewer = new JasperViewer(jp,false);
-            viewer.setTitle("All Report");
-            viewer.setVisible(true);
+        @Override
+        public void run() {
 
-        } catch (JRException e) {
-            throw new RuntimeException(e);
+            JasperPrint jp;
+            Connection conn = MyConnection.getConnection();
+            Map param = new HashMap();
+            try {
+                jp = JasperFillManager.fillReport("reports/ReportAll.jasper",param,conn);
+                JasperViewer viewer = new JasperViewer(jp,false);
+                viewer.setTitle("All Report");
+                viewer.setVisible(true);
+
+            } catch (JRException e) {
+                throw new RuntimeException(e);
+            }
         }
+    }
+
+    public class AllReportThread extends Thread{
+
+        @Override
+        public void run() {
+
+            JasperPrint jp;
+            Connection conn = MyConnection.getConnection();
+            Map param = new HashMap();
+            try {
+                jp = JasperFillManager.fillReport("reports/ReportGroup.jasper",param,conn);
+                JasperViewer viewer = new JasperViewer(jp,false);
+                viewer.setTitle("Group Report");
+                viewer.setVisible(true);
+
+            } catch (JRException e) {
+                throw new RuntimeException(e);
+            }
+
+        }
+    }
+
+
+    public void simpleReport (ActionEvent actionEvent) {
+
+        Thread thread = new Thread();
+
+        SimpleReportThread simpleReportThread = new SimpleReportThread();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(simpleReportThread);
+        executorService.shutdown();
 
     }
 
     public void categoryReport(ActionEvent actionEvent) {
 
-        JasperPrint jp;
-        Connection conn = MyConnection.getConnection();
-        Map param = new HashMap();
-        try {
-            jp = JasperFillManager.fillReport("reports/ReportGroup.jasper",param,conn);
-            JasperViewer viewer = new JasperViewer(jp,false);
-            viewer.setTitle("Group Report");
-            viewer.setVisible(true);
-
-        } catch (JRException e) {
-            throw new RuntimeException(e);
-        }
+        AllReportThread allReportThread = new AllReportThread();
+        ExecutorService executorService = Executors.newCachedThreadPool();
+        executorService.execute(allReportThread);
+        executorService.shutdown();
 
     }
 }
